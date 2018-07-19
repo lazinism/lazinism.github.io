@@ -1,3 +1,0 @@
-<?
-echo 'php test';
-?>
