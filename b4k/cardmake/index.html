@@ -1,0 +1,461 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>B4K cardmake</title>
+		<script src="data/layeredcanvas.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script>
+			var LC;
+			var typeLib = {
+			'fairy':[254,163,232],
+			'ghost':[112,88,152],
+			'water':[104,155,240],
+			'electric':[248,208,48],
+			'dark':[112,88,72],
+			'steel':[184,184,208],
+			'dragon':[112,56,248],
+			'rock':[184,160,56],
+			'bug':[168,184,32],
+			'poison':[160,64,160],
+			'psychic':[248,88,136],
+			'flying':[168,144,240],
+			'ice':[152,216,216],
+			'grass':[120,200,80],
+			'normal':[168,168,120],
+			'ground':[244,192,104],
+			'fighting':[192,48,40],
+			'fire':[240,128,48],
+			'none':null
+			};
+			var WaterMark = {id:'watermark', show:true, render:function(canvas, ctx){
+					ctx.save();
+					ctx.font = "6pt Nanum Gothic";
+					ctx.textAlign = "center";
+					ctx.fillStyle = "#000000";	
+					ctx.shadowOffsetX = 0;
+					ctx.shadowOffsetY = 0;
+					ctx.shadowBlur = 0;
+					ctx.shadowColor = "rgba(0,0,0,0)";
+					var text = "Designed By. 김용녀, Programmed By, Lazinism";
+					ctx.fillText(text, 246, 25);
+					ctx.restore();
+				}};
+				
+			$('document').ready(function(){
+				LC = new layeredCanvas('mycanvas');
+				LC.render();
+			});
+			function changedLayer(id, opacity){
+				LC.ctx2d.clearRect(0,0,350,510);
+				if(!LC.getLayer('l'+id)){
+					LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+						ctx.save();
+						var img = document.getElementById('i'+id);
+						ctx.globalAlpha = opacity;
+						ctx.drawImage(img,0,0,350,510);
+						ctx.restore();
+					}});
+				}
+				else LC.removeLayer('l'+id);
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function changedLayerov(id, opacity){
+				LC.ctx2d.clearRect(0,0,350,510);
+				if(!LC.getLayer('l'+id)){
+					LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+						ctx.save();
+						var img = document.getElementById('i'+id);
+						ctx.globalAlpha = opacity;
+						ctx.globalCompositeOperation = 'overlay';
+						ctx.drawImage(img,0,0,350,510);
+						ctx.restore();
+					}});
+				}
+				else LC.removeLayer('l'+id);
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function changedLayerText(ele, posX, posY, size){
+				LC.ctx2d.clearRect(0,0,350,510);
+				id = ele.id;
+				if(LC.getLayer('l'+id)) LC.removeLayer('l'+id);
+				LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+					ctx.save();
+					ctx.font = "bold "+size+"pt Nanum Gothic";
+					ctx.textAlign = "center";
+					ctx.fillStyle = "white";
+					ctx.shadowOffsetX = 1;
+					ctx.shadowOffsetY = 1;
+					ctx.shadowBlur = 4;
+					ctx.shadowColor = "rgba(0,0,0,0.8)";
+					var text = ele.value;
+					ctx.fillText(text, posX, posY);
+					ctx.restore();
+					}});
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function changedSkillBox(ele, boxpos){
+				LC.ctx2d.clearRect(0,0,350,510);
+				id = ele.id;
+				if(LC.getLayer('l'+id)) LC.removeLayer('l'+id);
+				if(ele.options[ele.selectedIndex].value!='none'){
+					LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+						ctx.save();	
+						drawRoundRect(ctx,boxpos[0],boxpos[1],boxpos[2],boxpos[3],5,'rgba('+typeLib[ele.options[ele.selectedIndex].value][0]+','+typeLib[ele.options[ele.selectedIndex].value][1]+','+typeLib[ele.options[ele.selectedIndex].value][2]+',0.7)');
+						ctx.restore();
+					}});
+				}
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function changedTypeBox(ele, boxpos, textpos){
+				LC.ctx2d.clearRect(0,0,350,510);
+				id = ele.id;
+				if(LC.getLayer('l'+id)) LC.removeLayer('l'+id);
+				if(ele.options[ele.selectedIndex].value!='none'){
+					LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+						ctx.save();
+						drawRoundRect(ctx,boxpos[0],boxpos[1],boxpos[2],boxpos[3],5,'rgba('+typeLib[ele.options[ele.selectedIndex].value][0]+','+typeLib[ele.options[ele.selectedIndex].value][1]+','+typeLib[ele.options[ele.selectedIndex].value][2]+',0.7)');
+						ctx.font = "bold "+textpos[2]+"pt Nanum Gothic";
+						ctx.textAlign = "center";
+						ctx.fillStyle = "white";
+						ctx.shadowOffsetX = 1;
+						ctx.shadowOffsetY = 1;
+						ctx.shadowBlur = 4;
+						ctx.shadowColor = "rgba(0,0,0,0.7)";
+						var text = ele.options[ele.selectedIndex].text;
+						if(text.length==2){
+							text = text[0]+'  '+text[1];
+						}
+						ctx.fillText(text, textpos[0], textpos[1]);
+						ctx.restore();
+						}});
+					}
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function drawRoundRect(ctx,x,y,width,height,radius,color){
+				ctx.beginPath();
+				ctx.moveTo(x+radius, y);
+				ctx.lineTo(x+width-radius,y);
+				ctx.quadraticCurveTo(x+width, y , x+width, y+radius);
+				ctx.lineTo(x+width, y+height-radius);
+				ctx.quadraticCurveTo(x+width, y+height, x+width-radius, y+height);
+				ctx.lineTo(x+radius, y+height);
+				ctx.quadraticCurveTo(x,y+height,x,y+height-radius);
+				ctx.lineTo(x,y+radius);
+				ctx.quadraticCurveTo(x,y,x+radius,y);
+				ctx.closePath();
+				ctx.strokeStyle=color;
+				ctx.fillStyle=color;
+				ctx.shadowOffsetX = 1;
+				ctx.shadowOffsetY = 1;
+				ctx.shadowBlur = 4;
+				ctx.shadowColor = "rgba(0,0,0,0.8)";
+				ctx.stroke();
+				ctx.fill();
+			}
+			function selectRank(ele){
+				LC.ctx2d.clearRect(0,0,350,510);
+				id = ele.id;
+				if(LC.getLayer('l'+id)) LC.removeLayer('l'+id);
+				LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+					ctx.save();
+					var img = document.getElementById('i'+ele.options[ele.selectedIndex].value);
+					ctx.drawImage(img,0,0,350,510);
+					img = document.getElementById('i03');
+					ctx.drawImage(img,0,0,350,510);
+					img = document.getElementById('i09');
+					ctx.drawImage(img,0,0,350,510);
+					switch(ele.selectedIndex){
+						case 0:
+						case 1:
+							img = document.getElementById('i04');
+							break;
+						case 2:
+							img = document.getElementById('i25');
+							break;
+						case 3:
+							img = document.getElementById('i26');
+							break;
+						default:
+					}
+					ctx.drawImage(img,0,0,350,510);
+					ctx.restore();
+				}});
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+			function pkimg(){
+				LC.ctx2d.clearRect(0,0,350,510);
+				if(document.getElementById('27').files && document.getElementById('27').files[0]){
+					var FR = new FileReader();
+					FR.onload = function(e){
+						var img = new Image();
+						img.addEventListener('load', function(){
+							if(LC.getLayer('l27')) LC.removeLayer('l27');
+							LC.addLayer({id:'l27', show:true, render:function(canvas,ctx){
+								var tempCanvas = document.createElement("canvas");
+								tctx = tempCanvas.getContext('2d');
+								tempCanvas.width=350;tempCanvas.height=510;
+								tctx.fillRect(14,0,322,510);
+								tctx.globalCompositeOperation="source-in";
+								tctx.drawImage(img, 0, 0);
+								ctx.drawImage(tempCanvas,0,0);
+							}});
+							LC.render();
+						});
+						img.src = e.target.result;
+					};
+					FR.readAsDataURL(document.getElementById('27').files[0]);
+				}
+			}
+			function nameText(ele){
+				LC.ctx2d.clearRect(0,0,350,510);
+				id = ele.id;
+				text = ele.value;
+				if(LC.getLayer('l'+id)) LC.removeLayer('l'+id);
+				LC.addLayer({id:'l'+id, show:true, render:function(canvas, ctx){
+					ctx.save();
+					ctx.font="bold 28pt Nanum Gothic";
+					ctx.textAlign="left";
+					ctx.strokeStyle="Black";
+					ctx.fillStyle="Black";
+					ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;ctx.shadowBlur=15;ctx.shadowColor="rgba(255,255,255,1)";
+					ctx.fillText(text,110,67);
+					ctx.lineWidth=2;
+					ctx.strokeText(text,110,67);
+					
+					var tempCanvas = document.createElement("canvas");
+					tctx = tempCanvas.getContext('2d');
+					tempCanvas.width=350;tempCanvas.height=510;
+					
+					tctx.globalCompositeOperation="destination-atop";
+					switch(document.getElementById('rank').selectedIndex){
+						case 0:
+						case 1:
+							var img = document.getElementById('i29');
+							tctx.drawImage(img,0,0);
+							break;
+						case 2:
+							var img = document.getElementById('i30');
+							tctx.globalAlpha = 0.5;
+							tctx.drawImage(img,0,0);
+							tctx.globalAlpha =1;
+							break;
+					}
+					tctx.font = "bold 28pt Nanum Gothic";
+					tctx.textAlign = 'left';
+					tctx.fillStyle = 'rgb(255,215,0)';
+					tctx.fillText(text,110,67);
+					ctx.drawImage(tempCanvas, 0, 0, 350,510);
+					ctx.restore();
+				}});
+				if(LC.getLayer('watermark')) LC.removeLayer('watermark');
+				LC.addLayer(WaterMark);
+				LC.render();
+			}
+		</script>
+		<style>
+			@import url(https://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+		</style>
+	</head>
+	<body>
+		<div style="display:none">
+			<img id="i00" src="data/base_rankS.png"/>
+			<img id="i02" src="data/mega.png"/>
+			<img id="i01" src="data/gold_overlay.png"/>
+			<img id="i03" src="data/pokemon_base.png"/>
+			<img id="i09" src="data/skill_base.png"/>
+			<img id="i10" src="data/tool_1.png"/>
+			<img id="i17" src="data/tool_2.png"/>
+			<img id="i23" src="data/base_rankA.png"/>
+			<img id="i24" src="data/base_rankB.png"/>
+			<img id="i04" src="data/name_rankS.png"/>
+			<img id="i25" src="data/name_rankA.png"/>
+			<img id="i26" src="data/name_rankB.png"/>
+			<img id="i29" src="data/name_clip_S.png"/>
+			<img id="i30" src="data/name_clip_A.png"/>
+		</div>
+		<div>
+			<canvas id="mycanvas" width="350" height="510"></canvas>
+		</div>
+		<div>
+			<div> Rank:
+				<select id="rank" onchange="selectRank(this)">
+					<option style="display:none"/>
+					<option value="00">S</option>
+					<option value="23">A</option>
+					<option value="24">B</option>
+				</select>
+				<input type="checkbox" id="01" value="gold_overlay" onchange="changedLayerov('01', 0.7);"/><label for="01">Gold overlay</label>
+				<input type="file" id="27" oninput='pkimg();'/>
+			</div>
+			<div> Pokemon name:
+				<input type="textbox" id="28" value="포켓몬 이름" oninput="nameText(this)" />
+			</div>
+			<div> Types:
+				<select id="11" oninput="changedTypeBox(this, [183,88,70,30], [218, 110, 15]);">
+					<option value="none" selected>없음</option>
+					<option value="steel">강철</option>
+					<option value="fighting">격투</option>
+					<option value="ghost">고스트</option>
+					<option value="normal">노말</option>
+					<option value="poison">독</option>
+					<option value="dragon">드래곤</option>
+					<option value="ground">땅</option>
+					<option value="water">물</option>
+					<option value="rock">바위</option>
+					<option value="bug">벌레</option>
+					<option value="fire">불꽃</option>
+					<option value="flying">비행</option>
+					<option value="dark">악</option>
+					<option value="ice">얼음</option>
+					<option value="psychic">에스퍼</option>
+					<option value="electric">전기</option>
+					<option value="fairy">페어리</option>
+					<option value="grass">풀</option>
+				</select>
+				<select id="12" oninput="changedTypeBox(this, [261,88,70,30], [296, 110, 15]);">
+					<option value="none" selected>없음</option>
+					<option value="steel">강철</option>
+					<option value="fighting">격투</option>
+					<option value="ghost">고스트</option>
+					<option value="normal">노말</option>
+					<option value="poison">독</option>
+					<option value="dragon">드래곤</option>
+					<option value="ground">땅</option>
+					<option value="water">물</option>
+					<option value="rock">바위</option>
+					<option value="bug">벌레</option>
+					<option value="fire">불꽃</option>
+					<option value="flying">비행</option>
+					<option value="dark">악</option>
+					<option value="ice">얼음</option>
+					<option value="psychic">에스퍼</option>
+					<option value="electric">전기</option>
+					<option value="fairy">페어리</option>
+					<option value="grass">풀</option>
+				</select>
+			</div>
+			<div>
+				<div>Skills #1:
+					<select id="05" oninput="changedSkillBox(this, [20, 409, 150, 38]);">
+						<option value="none" selected>없음</option>
+						<option value="steel">강철</option>
+						<option value="fighting">격투</option>
+						<option value="ghost">고스트</option>
+						<option value="normal">노말</option>
+						<option value="poison">독</option>
+						<option value="dragon">드래곤</option>
+						<option value="ground">땅</option>
+						<option value="water">물</option>
+						<option value="rock">바위</option>
+						<option value="bug">벌레</option>
+						<option value="fire">불꽃</option>
+						<option value="flying">비행</option>
+						<option value="dark">악</option>
+						<option value="ice">얼음</option>
+						<option value="psychic">에스퍼</option>
+						<option value="electric">전기</option>
+						<option value="fairy">페어리</option>
+						<option value="grass">풀</option>
+					</select>
+					<input type="textbox" id="13" value="skill 1st Text" oninput="changedLayerText(this, 94, 435, 15);"/>
+				</div>
+				<div>Skills #2:
+					<select id="06" oninput="changedSkillBox(this, [180, 409, 150, 38]);">
+						<option value="none" selected>없음</option>
+						<option value="steel">강철</option>
+						<option value="fighting">격투</option>
+						<option value="ghost">고스트</option>
+						<option value="normal">노말</option>
+						<option value="poison">독</option>
+						<option value="dragon">드래곤</option>
+						<option value="ground">땅</option>
+						<option value="water">물</option>
+						<option value="rock">바위</option>
+						<option value="bug">벌레</option>
+						<option value="fire">불꽃</option>
+						<option value="flying">비행</option>
+						<option value="dark">악</option>
+						<option value="ice">얼음</option>
+						<option value="psychic">에스퍼</option>
+						<option value="electric">전기</option>
+						<option value="fairy">페어리</option>
+						<option value="grass">풀</option>
+					</select>
+					<input type="textbox" id="14" value="skill 2nd Text" oninput="changedLayerText(this, 256, 435, 15);"/>
+				</div>
+				<div>Skills #3:
+					<select id="07" oninput="changedSkillBox(this, [20, 454, 150, 38]);">
+						<option value="none" selected>없음</option>
+						<option value="steel">강철</option>
+						<option value="fighting">격투</option>
+						<option value="ghost">고스트</option>
+						<option value="normal">노말</option>
+						<option value="poison">독</option>
+						<option value="dragon">드래곤</option>
+						<option value="ground">땅</option>
+						<option value="water">물</option>
+						<option value="rock">바위</option>
+						<option value="bug">벌레</option>
+						<option value="fire">불꽃</option>
+						<option value="flying">비행</option>
+						<option value="dark">악</option>
+						<option value="ice">얼음</option>
+						<option value="psychic">에스퍼</option>
+						<option value="electric">전기</option>
+						<option value="fairy">페어리</option>
+						<option value="grass">풀</option>
+					</select>
+					<input type="textbox" id="15" value="skill 3rd Text" oninput="changedLayerText(this, 94, 480, 15);"/>
+				</div>
+				<div>Skills #4:
+				<select id="08" oninput="changedSkillBox(this, [180,454, 150, 38]);">
+					<option value="none" selected>없음</option>
+					<option value="steel">강철</option>
+					<option value="fighting">격투</option>
+					<option value="ghost">고스트</option>
+					<option value="normal">노말</option>
+					<option value="poison">독</option>
+					<option value="dragon">드래곤</option>
+					<option value="ground">땅</option>
+					<option value="water">물</option>
+					<option value="rock">바위</option>
+					<option value="bug">벌레</option>
+					<option value="fire">불꽃</option>
+					<option value="flying">비행</option>
+					<option value="dark">악</option>
+					<option value="ice">얼음</option>
+					<option value="psychic">에스퍼</option>
+					<option value="electric">전기</option>
+					<option value="fairy">페어리</option>
+					<option value="grass">풀</option>
+				</select>
+				<input type="textbox" id="16" value="skill 4th Text" oninput="changedLayerText(this, 256, 480, 15);"/>
+			</div>
+			</div>
+			<div> Tools:
+				<input type="checkbox" id="10" value="tool_1" onchange="changedLayer('10', 1);"/><label for="10">tool_1st</label>
+				<input type="checkbox" id="17" value="tool_2" onchange="changedLayer('17', 1);"/><label for="17">tool_2nd</label>
+			</div>
+			<div> Tool Text:
+				<input type="textbox" id="18" value="tool 1st Text" oninput="changedLayerText(this, 256, 349, 15);"/>
+				<input type="textbox" id="19" value="tool 2nd Text" oninput="changedLayerText(this, 256, 386, 15);"/>
+			</div>
+			<div> 메가진화:
+				<input type="checkbox" id="02" value="mega" onchange="changedLayer('02', 1);"/><label for="02">mega</label>
+			</div>
+		</div>
+	</body>
+</html>
