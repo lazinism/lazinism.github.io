@@ -1,0 +1,18 @@
+<!html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>ZOOM</title>
+        <script>
+            function doaction(){
+                var text = document.getElementById('tb').value;
+                location.href='http://etl.snu.ac.kr/mod/zoom/loadmeeting.php?id='+text;
+            }
+            window.onload = function() {document.getElementById("tb").focus();};
+        </script>
+    </head>
+    <body>
+        <input type='textbox' id='tb'></input>
+        <input type='button' value='제출' onclick='doaction()'></input>
+    </body>
+</html>
