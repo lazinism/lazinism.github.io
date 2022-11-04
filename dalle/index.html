@@ -6,10 +6,11 @@
 		<script src="https://code.jquery.com/jquery-3.6.1.min.js" /></script>
         <script>
 			function sendData(){
+				var s_o_s = 256*Math.pow(2,$('#size').val())+"x"+256*Math.pow(2,$('#size').val());
 				var items = {
 						prompt: $('#prompt').val(),
 						n: 1,
-						size: $('#size').val()
+						size: s_o_s
 					}
 				$.ajax({
 					url: 'https://api.openai.com/v1/images/generations',
@@ -27,6 +28,9 @@
 					}
 				});
 			}
+			function schange(e){
+				$("#s_o").text(256*Math.pow(2,$('#size').val())+"x"+256*Math.pow(2,$('#size').val()));
+			}
         </script>
         <style>
 			div#input > div{
@@ -40,13 +44,15 @@
 				vertical-align: middle;
 			}
 			div.table{display: flex;
-			  align-items: center;}
+			  align-items: center;
+			}
         </style>
     </head>
     <body>
         <div id='input'>
             <div><label for="key">API 키: </label><input type="password" id="key"></div>
-			<div><label for="size">이미지 크기: </label><input type="text" id="size" value="1024x1024"></div>
+			<div><label for="size">이미지 크기: </label><input type="range" min='0' max='2' step='1' id="size" onchange="schange();"/><label id="s_o">512x512</label>
+			</div>
             <div class="table"><label for="prompt">Prompt: </label><textarea id="prompt"></textarea></div>
             <div><input type="button" id="send" value="Generate!" onclick="sendData();"></div>
         </div>
