@@ -21,10 +21,18 @@
 						"Authorization": "Bearer "+$('#key').val()
 					},
 					dataType: 'json',
+					beforeSend: function(data){
+						$('img#output').attr('src','');
+						$('div#failout').text('');
+					},
 					success: function(data){
-						console.log(data);
 						var imageurl = data['data'][0]['url'];
 						$('img#output').attr('src',imageurl);
+					},
+					error: function(data){
+						console.log(data);
+						err = data['responseJSON']['error']['message'];
+						$('div#failout').text(err);
 					}
 				});
 			}
@@ -57,6 +65,7 @@
             <div><input type="button" id="send" value="Generate!" onclick="sendData();"></div>
         </div>
 		<div>
+			<div id="failout"></div>
 			<img id="output"></img>
 		</div>
     </body>
