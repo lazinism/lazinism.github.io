@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Dall-E</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script src="https://code.jquery.com/jquery-3.6.1.min.js" /></script>
+        <script>
+			function sendData(){
+				var items = {
+						prompt: $('#prompt').val(),
+						n: 1,
+						size: $('#size').val()
+					}
+				$.ajax({
+					url: 'https://api.openai.com/v1/images/generations',
+					type: 'POST',
+					data: JSON.stringify(items),
+					headers: {
+						'Content-Type': 'application/json',
+						"Authorization": "Bearer "+$('#key').val()
+					},
+					dataType: 'json',
+					success: function(data){
+						console.log(data);
+						var imageurl = data['data'][0]['url'];
+						$('img#output').attr('src',imageurl);
+					}
+				});
+			}
+        </script>
+        <style>
+			div#input > div{
+				margin-bottom:2px;
+			}
+			textarea#prompt {
+				width: 400px;
+				height: 40px;
+			}
+			label{
+				vertical-align: middle;
+			}
+			div.table{display: flex;
+			  align-items: center;}
+        </style>
+    </head>
+    <body>
+        <div id='input'>
+            <div><label for="key">API 키: </label><input type="password" id="key"></div>
+			<div><label for="size">이미지 크기: </label><input type="text" id="size" value="1024x1024"></div>
+            <div class="table"><label for="prompt">Prompt: </label><textarea id="prompt"></textarea></div>
+            <div><input type="button" id="send" value="Generate!" onclick="sendData();"></div>
+        </div>
+		<div>
+			<img id="output"></img>
+		</div>
+    </body>
+</html>
