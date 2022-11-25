@@ -1,1 +1,4 @@
-{'restrict':false}
+{
+ 'version':'1.0.0',
+ 'restrict':false
+}
