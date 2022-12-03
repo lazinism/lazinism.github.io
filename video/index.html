@@ -18,7 +18,7 @@
                 var text = document.getElementById('tbx').value;
                 var out = document.getElementById('output');
                 if(text.endsWith(".jpg")){
-                    text = text.replace("-preview-480x272.jpg", ".mp4");
+                    text = text.replace(/-preview-\d{1,4}x\d{1,4}\.jpg/, ".mp4");
                     document.getElementById('tbx').value = text;
                 }
                 out.innerHTML='<video id="outVideo" src="'+text+'" style=" width: 50%;" controls>';
