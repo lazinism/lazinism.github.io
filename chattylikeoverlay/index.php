@@ -12,6 +12,7 @@ if (isset($_GET['ch'])){
 	]);
 	$response = curl_exec($curl);
 	echo $response;
+curl_close($curl);
 }
 	
 ?>
