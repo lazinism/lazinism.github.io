@@ -11,9 +11,24 @@ if (isset($_GET['ch'])){
 		CURLOPT_HTTPHEADER => ['Content-Type: application/json']
 	]);
 	$response = curl_exec($curl);
-	echo $response;
-curl_close($curl);
+	if ($response === true) {
+		$chid = json_decode($response)['content']['chatChannelId'];
+		$url = "https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId=".$chid."&chatType=STREAMING";
+		curl_setopt_array($curl, [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true, // Return the response as a string instead of outputting it
+			CURLOPT_FOLLOWLOCATION => true, // Follow any redirects
+			CURLOPT_HTTPGET => true, // Use GET method
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+		]);
+		$response = curl_exec($curl);
+		if ($response === true){
+			$access_token = json_decode($response)['content']['accessToken'];
+		}
+	}
 }
+curl_close($curl)
 	
 ?>
 
