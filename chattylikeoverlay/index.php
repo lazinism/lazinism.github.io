@@ -1,3 +1,36 @@
+<?
+$curl = curl_init();
+if (isset($_GET['ch'])){
+	$url = "https://api.chzzk.naver.com/polling/v1/channels/{$_GET['ch']}/live-status";
+	curl_setopt_array($curl, [
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true, // Return the response as a string instead of outputting it
+		CURLOPT_FOLLOWLOCATION => true, // Follow any redirects
+		CURLOPT_HTTPGET => true, // Use GET method
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+	]);
+	$response = curl_exec($curl);
+	if ($response === true) {
+		$chid = json_decode($response)['content']['chatChannelId'];
+		$url = "https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId={$chid}&chatType=STREAMING";
+		curl_setopt_array($curl, [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true, // Return the response as a string instead of outputting it
+			CURLOPT_FOLLOWLOCATION => true, // Follow any redirects
+			CURLOPT_HTTPGET => true, // Use GET method
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+		]);
+		$response = curl_exec($curl);
+		if ($response === true){
+			$access_token = json_decode($response)['content']['accessToken'];
+		}
+	}
+}
+	
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -123,7 +156,7 @@
         let o = urlParams.get('te').replace(":", '<span class="colon">:</span>').replace("{badge}",r).replace("{time}","").replace("{user}",n).replace("{message}",`<span class="message">${m}</span>`);a.innerHTML=o,a.classList.add("chatHolder"),document.getElementById("mainFrame").appendChild(a),setTimeout(()=>{a.classList.add("fadeOut"),setTimeout(()=>{a.remove()},500)},urlParams.get('di'))}function connectToTwitch() {
               let t = new WebSocket("wss://irc-ws.chat.twitch.tv/");
               t.onopen = function(n) {
-                t.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"), t.send("PASS SCHMOOPIIE"), t.send("NICK justinfan11276"), t.send("USER justinfan11276 8 * :justinfan11276"), t.send(`JOIN #${urlParams.get('tw')}`)
+                t.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"), t.send("PASS SCHMOOPIIE"), t.send("NICK justinfan11276"), t.send("USER justinfan11276 8 * :justinfan11276"), t.send(`JOIN #<?echo $_GET['tw']);?>`)
               }, t.onmessage = function t(n) {
                 let s = n.data.trim();
                 if (s.startsWith("PING")) t.send("PONG");
@@ -134,7 +167,7 @@
                     a = c ? c[1] : null;
                   if (i.length > 1) {
                     let o = i[1].split(";")[0],
-                      l = i[1].split(`PRIVMSG #${urlParams.get('tw')}`);
+                      l = i[1].split(`PRIVMSG #<?echo $_GET['tw']);?>`);
                     l.length > 1 && createAndDisplayDiv({
                       nickname: o,
                       message: l[1].split(":")[1],
@@ -155,11 +188,11 @@
                   ver: "2",
                   cmd: 100,
                   svcid: "game",
-                  cid: `${urlParams.get('ch')}`,
+                  cid: `<?echo $chid;?>`,
                   bdy: {
                     uid: null,
                     devType: 2001,
-                    accTkn: `${urlParams.get('ac')}`,
+                    accTkn: `<?echo $access_token;?>}`,
                     auth: "READ"
                   },
                   tid: 1
