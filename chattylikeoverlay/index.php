@@ -1,7 +1,7 @@
 <?
 $curl = curl_init();
 if (isset($_GET['ch'])){
-	$url = "https://api.chzzk.naver.com/polling/v1/channels/{$_GET['ch']}/live-status";
+	$url = "https://api.chzzk.naver.com/polling/v1/channels/".$_GET['ch']."/live-status";
 	curl_setopt_array($curl, [
 		CURLOPT_URL => $url,
 		CURLOPT_RETURNTRANSFER => true, // Return the response as a string instead of outputting it
