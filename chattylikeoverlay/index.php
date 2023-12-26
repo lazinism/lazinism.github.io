@@ -157,7 +157,7 @@ if (isset($_GET['ch'])){
               let t = new WebSocket("wss://irc-ws.chat.twitch.tv/");
               t.onopen = function(n) {
                 t.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"), t.send("PASS SCHMOOPIIE"), t.send("NICK justinfan11276"), t.send("USER justinfan11276 8 * :justinfan11276"), t.send(`JOIN #<?echo $_GET['tw']);?>`)
-              }, t.onmessage = function t(n) {
+              }, t.onmessage = function(n) {
                 let s = n.data.trim();
                 if (s.startsWith("PING")) t.send("PONG");
                 else if (s.startsWith("PONG")) t.send("PING");
