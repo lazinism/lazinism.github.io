@@ -120,9 +120,7 @@
             m = m.replace(j, p[h])
           })
         }
-        let o = urlParams.get('te').replace(":", ' < span class = "colon" > : < /span>').replace("{badge}",r).replace("{time}","").replace("{user}",n).replace("{message}",` < span class = "message" > $ {
-              m
-            } < /span>`);a.innerHTML=o,a.classList.add("chatHolder"),document.getElementById("mainFrame").appendChild(a),setTimeout(()=>{a.classList.add("fadeOut"),setTimeout(()=>{a.remove()},500)},urlParams.get('di'))}function connectToTwitch() {
+        let o = urlParams.get('te').replace(":", '<span class="colon">:</span>').replace("{badge}",r).replace("{time}","").replace("{user}",n).replace("{message}",`<span class="message">${m}</span>`);a.innerHTML=o,a.classList.add("chatHolder"),document.getElementById("mainFrame").appendChild(a),setTimeout(()=>{a.classList.add("fadeOut"),setTimeout(()=>{a.remove()},500)},urlParams.get('di'))}function connectToTwitch() {
               let t = new WebSocket("wss://irc-ws.chat.twitch.tv/");
               t.onopen = function(n) {
                 t.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"), t.send("PASS SCHMOOPIIE"), t.send("NICK justinfan11276"), t.send("USER justinfan11276 8 * :justinfan11276"), t.send(`JOIN #${urlParams.get('tw')}`)
