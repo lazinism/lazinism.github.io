@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP to PNG Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        .upload-container {
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            width: 300px;
+        }
+        .upload-container.dragover {
+            border-color: #666;
+            background-color: #e9e9e9;
+        }
+        .upload-container input {
+            margin-top: 10px;
+        }
+        .output-container {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .output-container img {
+            max-width: 150px;
+            max-height: 150px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebP to PNG Converter</h1>
+    <div class="upload-container" id="dropZone">
+        <p>Drag and drop WebP files here or click to select:</p>
+        <input type="file" id="fileInput" accept="image/webp" multiple>
+    </div>
+    <div class="output-container" id="outputContainer"></div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const outputContainer = document.getElementById('outputContainer');
+        const processedFiles = new Set(); // To keep track of already processed files
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            for (const file of files) {
+                if (processedFiles.has(file.name)) {
+                    continue; // Skip already processed files
+                }
+
+                if (file.type === 'image/webp') {
+                    processedFiles.add(file.name); // Mark file as processed
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+
+                            canvas.toBlob(function(blob) {
+                                const pngUrl = URL.createObjectURL(blob);
+                                const previewImage = document.createElement('img');
+                                previewImage.src = pngUrl;
+                                previewImage.title = `Click to download ${file.name.replace(/\.webp$/, '.png')}`;
+                                previewImage.addEventListener('click', () => {
+                                    const downloadLink = document.createElement('a');
+                                    downloadLink.href = pngUrl;
+                                    downloadLink.download = file.name.replace(/\.webp$/, '.png');
+                                    downloadLink.click();
+                                });
+                                outputContainer.appendChild(previewImage);
+                            }, 'image/png');
+                        };
+                        img.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = `${file.name} is not a WebP file.`;
+                    errorMessage.style.color = 'red';
+                    outputContainer.appendChild(errorMessage);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
