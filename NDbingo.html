@@ -127,24 +127,18 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        const gridAreaStartPercent = 14; 
-        const cellStartWidthPercent = 2.5; 
-        const gridAreaWidthPercent = 95; 
-        const gridAreaHeightPercent = 84; 
-
-        const gridX = canvas.width * (cellStartWidthPercent / 100);
-        const gridY = canvas.height * (gridAreaStartPercent / 100);
-        const gridWidth = canvas.width * (gridAreaWidthPercent / 100);
-        const gridHeight = canvas.height * (gridAreaHeightPercent / 100);
-
-        const cellWidth = gridWidth / gridCols;
-        const cellHeight = gridHeight / gridRows;
+        // 빙고판 좌표 및 크기 정밀 조정 (원본 이미지 비율 기반)
+        const startX = canvas.width * 0.025;   // 좌측 여백 2.5%
+        const startY = canvas.height * 0.185;  // 상단 여백 18.5% (로고 영역 아래로 이동)
+        const boxWidth = canvas.width * 0.176; // 각 칸의 너비 17.6%
+        const boxHeight = canvas.height * 0.145;// 각 칸의 높이 14.5%
+        const gapX = canvas.width * 0.017;     // 가로 칸 간격 1.7%
+        const gapY = canvas.height * 0.015;    // 세로 칸 간격 1.5%
 
         const bgAlpha = 0.6; 
         const textColor = '#FF0000'; 
         const fontSize = 18; 
         const lineHeight = 22; 
-        const maxWidthPaddingPercent = 10; 
 
         for (let r = 0; r < gridRows; r++) {
             for (let c = 0; c < gridCols; c++) {
@@ -152,22 +146,26 @@
                 const text = document.getElementById(`input-${i}`).value;
 
                 if (text) {
-                    const x = gridX + c * cellWidth;
-                    const y = gridY + r * cellHeight;
+                    // 각 칸의 정확한 X, Y 시작점 계산 (간격 포함)
+                    const x = startX + c * (boxWidth + gapX);
+                    const y = startY + r * (boxHeight + gapY);
 
+                    // 1. 반투명 배경 그리기
                     ctx.fillStyle = `rgba(255, 255, 255, ${bgAlpha})`;
-                    const cellPadding = 2; 
-                    ctx.fillRect(x + cellPadding, y + cellPadding, cellWidth - 2 * cellPadding, cellHeight - 2 * cellPadding);
+                    const padding = 3; // 테두리를 가리지 않도록 안쪽으로 3px 여백
+                    ctx.fillRect(x + padding, y + padding, boxWidth - (padding * 2), boxHeight - (padding * 2));
 
+                    // 2. 텍스트 그리기
                     ctx.fillStyle = textColor;
                     ctx.font = `bold ${fontSize}px sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
 
-                    const textX = x + cellWidth / 2;
-                    const textY = y + cellHeight / 2;
-                    const maxWidth = cellWidth * (1 - 2 * (maxWidthPaddingPercent / 100));
+                    const textX = x + boxWidth / 2;
+                    const textY = y + boxHeight / 2;
+                    const maxWidth = boxWidth * 0.9; // 칸 너비의 90%로 줄바꿈 제한
 
+                    // 중앙 정렬을 위한 텍스트 높이 추정
                     const linesToCalculateHeight = text.split(' ').length;
                     const estimatedTextHeight = linesToCalculateHeight * lineHeight;
                     const startingY = textY - estimatedTextHeight / 2 + lineHeight / 2; 
