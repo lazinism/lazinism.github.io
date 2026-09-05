@@ -1,4 +1,74 @@
-const canvas = document.getElementById('bingoCanvas');
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nintendo Direct Bingo Maker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #bingoCanvas {
+            border: 1px solid #ccc;
+        }
+
+        #inputGrid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #inputGrid input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #e60012; /* Nintendo Red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #b3000f;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <canvas id="bingoCanvas" width="800" height="900"></canvas>
+</div>
+
+<div id="inputGrid">
+    </div>
+
+<button id="updateButton">텍스트 적용</button>
+
+<script>
+    const canvas = document.getElementById('bingoCanvas');
     const ctx = canvas.getContext('2d');
     const inputGrid = document.getElementById('inputGrid');
     const updateButton = document.getElementById('updateButton');
@@ -17,9 +87,7 @@ const canvas = document.getElementById('bingoCanvas');
         drawBingo();
     };
 
-    // Base64 문자열 대신 로컬 파일 경로 지정
-    // HTML 파일과 image_61e0e9.jpg 파일이 같은 폴더 위치(루트)에 있어야 정상 작동합니다.
-    img.src = 'etcs/bingo.jpg';
+    img.src = 'etcs/bingo.png';
 
     function createInputs() {
         for (let i = 0; i < numCells; i++) {
@@ -111,3 +179,7 @@ const canvas = document.getElementById('bingoCanvas');
     }
 
     updateButton.addEventListener('click', drawBingo);
+</script>
+
+</body>
+</html>
