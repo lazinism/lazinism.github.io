@@ -127,11 +127,13 @@ function drawBingo() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        const colStartXMultipliers = [0.015, 0.212, 0.409, 0.606, 0.803]; 
+        // [수정] 양끝 열의 간격을 바깥쪽으로 미세하게 넓힘
+        const colStartXMultipliers = [0.014, 0.211, 0.409, 0.607, 0.805]; 
         
-        const startY = canvas.height * 0.185;  
-        const boxWidth = canvas.width * 0.182; 
-        const boxHeight = canvas.height * 0.145;
+        // [수정] 박스 크기 미세 확대 및 Y축 시작점 영점 조절
+        const startY = canvas.height * 0.186;  
+        const boxWidth = canvas.width * 0.184; 
+        const boxHeight = canvas.height * 0.146;
         const gapY = canvas.height * 0.015;    
 
         const bgAlpha = 0.6; 
@@ -149,8 +151,8 @@ function drawBingo() {
                     const y = startY + r * (boxHeight + gapY);
 
                     ctx.fillStyle = `rgba(255, 255, 255, ${bgAlpha})`;
-                    // [수정] 박스 크기 축소를 위해 안쪽 여백(padding) 증가 (3 -> 8)
-                    const padding = 8; 
+                    // [수정] 안쪽 여백(padding)을 줄여 틈새 최소화 (8 -> 5)
+                    const padding = 5; 
                     ctx.fillRect(x + padding, y + padding, boxWidth - (padding * 2), boxHeight - (padding * 2));
 
                     ctx.fillStyle = textColor;
