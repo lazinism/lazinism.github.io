@@ -127,14 +127,13 @@ function drawBingo() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // [핵심 수정] 1~5열의 X축 시작 비율을 배열로 개별 강제 할당 (좌우 완벽 대칭 기준)
-        // 오차가 발생할 경우, 해당 열의 소수점 수치만 개별적으로 수정하여 즉시 영점을 맞출 수 있습니다.
-        const colStartXMultipliers = [0.020, 0.215, 0.410, 0.605, 0.800]; 
+        // [수정] 양끝 쏠림 현상 해결을 위한 좌표 및 너비 확장
+        const colStartXMultipliers = [0.015, 0.212, 0.409, 0.606, 0.803]; 
         
-        const startY = canvas.height * 0.185;  // (유지)
-        const boxWidth = canvas.width * 0.180; // 칸 너비 18.0%
-        const boxHeight = canvas.height * 0.145;// (유지)
-        const gapY = canvas.height * 0.015;    // (유지)
+        const startY = canvas.height * 0.185;  
+        const boxWidth = canvas.width * 0.182; // (수정) 칸 너비 확장 (18.0% -> 18.2%)
+        const boxHeight = canvas.height * 0.145;
+        const gapY = canvas.height * 0.015;    
 
         const bgAlpha = 0.6; 
         const textColor = '#FF0000'; 
@@ -147,7 +146,6 @@ function drawBingo() {
                 const text = document.getElementById(`input-${i}`).value;
 
                 if (text) {
-                    // 수식 계산 대신 배열에서 해당 열의 X 좌표 비율을 직접 가져옴
                     const x = canvas.width * colStartXMultipliers[c];
                     const y = startY + r * (boxHeight + gapY);
 
