@@ -127,13 +127,13 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // 빙고판 좌표 및 크기 정밀 조정 (원본 이미지 비율 기반)
-        const startX = canvas.width * 0.025;   // 좌측 여백 2.5%
-        const startY = canvas.height * 0.185;  // 상단 여백 18.5% (로고 영역 아래로 이동)
-        const boxWidth = canvas.width * 0.176; // 각 칸의 너비 17.6%
-        const boxHeight = canvas.height * 0.145;// 각 칸의 높이 14.5%
-        const gapX = canvas.width * 0.017;     // 가로 칸 간격 1.7%
-        const gapY = canvas.height * 0.015;    // 세로 칸 간격 1.5%
+        // X축 오차 수정을 위한 정밀 비율 재조정
+        const startX = canvas.width * 0.022;   // (수정) 좌측 여백 축소 (2.5% -> 2.2%)
+        const startY = canvas.height * 0.185;  // (유지)
+        const boxWidth = canvas.width * 0.178; // (수정) 칸 너비 확대 (17.6% -> 17.8%)
+        const boxHeight = canvas.height * 0.145;// (유지)
+        const gapX = canvas.width * 0.016;     // (수정) 가로 칸 간격 축소 (1.7% -> 1.6%)
+        const gapY = canvas.height * 0.015;    // (유지)
 
         const bgAlpha = 0.6; 
         const textColor = '#FF0000'; 
@@ -146,16 +146,13 @@
                 const text = document.getElementById(`input-${i}`).value;
 
                 if (text) {
-                    // 각 칸의 정확한 X, Y 시작점 계산 (간격 포함)
                     const x = startX + c * (boxWidth + gapX);
                     const y = startY + r * (boxHeight + gapY);
 
-                    // 1. 반투명 배경 그리기
                     ctx.fillStyle = `rgba(255, 255, 255, ${bgAlpha})`;
-                    const padding = 3; // 테두리를 가리지 않도록 안쪽으로 3px 여백
+                    const padding = 3; 
                     ctx.fillRect(x + padding, y + padding, boxWidth - (padding * 2), boxHeight - (padding * 2));
 
-                    // 2. 텍스트 그리기
                     ctx.fillStyle = textColor;
                     ctx.font = `bold ${fontSize}px sans-serif`;
                     ctx.textAlign = 'center';
@@ -163,9 +160,8 @@
 
                     const textX = x + boxWidth / 2;
                     const textY = y + boxHeight / 2;
-                    const maxWidth = boxWidth * 0.9; // 칸 너비의 90%로 줄바꿈 제한
+                    const maxWidth = boxWidth * 0.9; 
 
-                    // 중앙 정렬을 위한 텍스트 높이 추정
                     const linesToCalculateHeight = text.split(' ').length;
                     const estimatedTextHeight = linesToCalculateHeight * lineHeight;
                     const startingY = textY - estimatedTextHeight / 2 + lineHeight / 2; 
