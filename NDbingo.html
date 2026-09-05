@@ -127,11 +127,10 @@ function drawBingo() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // [수정] 양끝 쏠림 현상 해결을 위한 좌표 및 너비 확장
         const colStartXMultipliers = [0.015, 0.212, 0.409, 0.606, 0.803]; 
         
         const startY = canvas.height * 0.185;  
-        const boxWidth = canvas.width * 0.182; // (수정) 칸 너비 확장 (18.0% -> 18.2%)
+        const boxWidth = canvas.width * 0.182; 
         const boxHeight = canvas.height * 0.145;
         const gapY = canvas.height * 0.015;    
 
@@ -150,7 +149,8 @@ function drawBingo() {
                     const y = startY + r * (boxHeight + gapY);
 
                     ctx.fillStyle = `rgba(255, 255, 255, ${bgAlpha})`;
-                    const padding = 3; 
+                    // [수정] 박스 크기 축소를 위해 안쪽 여백(padding) 증가 (3 -> 8)
+                    const padding = 8; 
                     ctx.fillRect(x + padding, y + padding, boxWidth - (padding * 2), boxHeight - (padding * 2));
 
                     ctx.fillStyle = textColor;
